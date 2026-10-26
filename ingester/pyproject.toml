@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wiki-pulse-ingester"
+version = "0.1.0"
+description = "Streams Wikimedia recent changes into ClickHouse in batches"
+requires-python = ">=3.11"
+dependencies = [
+    "clickhouse-connect==1.11.0",
+    "pydantic==2.14.1",
+    "pydantic-settings==2.16.1",
+    "requests==2.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.17.2",
+]
+
+[project.scripts]
+wiki-pulse-ingester = "wiki_pulse_ingester.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wiki_pulse_ingester"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["wiki_pulse_ingester"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = ['if __name__ == "__main__":']
+
+[tool.ruff]
+# PEP 8 allows teams to agree on up to 99 characters.
+line-length = 99
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle: PEP 8 layout, whitespace, line length
+    "F",        # pyflakes: unused imports/variables, undefined names
+    "N",        # pep8-naming
+    "I",        # import order (PEP 8 import grouping)
+    "B",        # bugbear: likely bugs
+    "UP",       # modern syntax for the minimum Python version
+    "SIM",      # simplifications
+    "C4",       # comprehension style
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["wiki_pulse_ingester"]
+
+[tool.ruff.format]
+quote-style = "double"
